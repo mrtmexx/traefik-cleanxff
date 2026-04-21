@@ -1,5 +1,5 @@
-// Package cleanxff is a Traefik middleware plugin that removes trusted IP
-// addresses from the X-Forwarded-For header before the request is forwarded
+// Package traefik_cleanxff is a Traefik middleware plugin that removes trusted
+// IP addresses from the X-Forwarded-For header before the request is forwarded
 // to the upstream backend.
 //
 // Typical use case: you have one or more trusted proxies in front of Traefik
@@ -8,7 +8,10 @@
 // addresses remain in the X-Forwarded-For chain and are forwarded to the
 // backend. This plugin strips them, leaving only the real client IP
 // (and any untrusted intermediate hops, if they exist).
-package cleanxff
+//
+// The package name matches the last segment of the module path with hyphens
+// replaced by underscores, as required by Yaegi when loading Traefik plugins.
+package traefik_cleanxff
 
 import (
 	"context"

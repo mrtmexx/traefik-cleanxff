@@ -1,4 +1,4 @@
-package cleanxff
+package traefik_cleanxff
 
 import (
 	"context"
