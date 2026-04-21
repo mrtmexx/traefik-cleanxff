@@ -133,7 +133,7 @@ http:
 
 | Field          | Type       | Default             | Description                                                                 |
 |----------------|------------|---------------------|-----------------------------------------------------------------------------|
-| `trustedCIDRs` | `[]string` | **required**        | List of CIDR ranges whose IPs will be stripped from the header. IPv4 & IPv6.|
+| `trustedCIDRs` | `[]string` | **required**        | List of CIDR ranges or bare IPs whose addresses will be stripped from the header. IPv4 & IPv6. A bare IP is treated as `/32` (IPv4) or `/128` (IPv6).|
 | `headerName`   | `string`   | `X-Forwarded-For`   | Name of the header to clean. Override only for non-standard setups.         |
 
 ## Recommended setup

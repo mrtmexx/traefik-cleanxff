@@ -128,6 +128,37 @@ func TestEmptyCIDRsFails(t *testing.T) {
 	}
 }
 
+func TestBareIPv4AcceptedAsSlash32(t *testing.T) {
+	h := newHandler(t, []string{"95.216.194.228"})
+
+	got := runAndGetXFF(t, h, "1.1.1.1, 95.216.194.228")
+	want := "1.1.1.1"
+	if got != want {
+		t.Errorf("got %q, want %q", got, want)
+	}
+}
+
+func TestBareIPv6AcceptedAsSlash128(t *testing.T) {
+	h := newHandler(t, []string{"2001:db8::1"})
+
+	got := runAndGetXFF(t, h, "2001:db8::1, 1.1.1.1")
+	want := "1.1.1.1"
+	if got != want {
+		t.Errorf("got %q, want %q", got, want)
+	}
+}
+
+func TestBareIPDoesNotMatchNeighbor(t *testing.T) {
+	h := newHandler(t, []string{"95.216.194.228"})
+
+	// /32 must NOT match a different address in the same /24.
+	got := runAndGetXFF(t, h, "1.1.1.1, 95.216.194.229")
+	want := "1.1.1.1, 95.216.194.229"
+	if got != want {
+		t.Errorf("got %q, want %q", got, want)
+	}
+}
+
 func TestNonIPTokenPreserved(t *testing.T) {
 	h := newHandler(t, []string{"10.0.0.0/8"})
 

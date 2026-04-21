@@ -65,9 +65,9 @@ func New(ctx context.Context, next http.Handler, cfg *Config, name string) (http
 		if c == "" {
 			continue
 		}
-		_, n, err := net.ParseCIDR(c)
+		n, err := parseCIDROrIP(c)
 		if err != nil {
-			return nil, fmt.Errorf("cleanxff: invalid CIDR %q: %w", c, err)
+			return nil, fmt.Errorf("cleanxff: invalid CIDR or IP %q: %w", c, err)
 		}
 		nets = append(nets, n)
 	}
@@ -133,4 +133,21 @@ func (c *CleanXFF) isTrusted(ip net.IP) bool {
 		}
 	}
 	return false
+}
+
+// parseCIDROrIP accepts either a CIDR ("10.0.0.0/8", "2001:db8::/32") or a
+// bare IP address ("95.216.194.228", "2001:db8::1"). A bare IPv4 address is
+// treated as /32, a bare IPv6 address as /128.
+func parseCIDROrIP(s string) (*net.IPNet, error) {
+	if _, n, err := net.ParseCIDR(s); err == nil {
+		return n, nil
+	}
+	ip := net.ParseIP(s)
+	if ip == nil {
+		return nil, fmt.Errorf("not a valid CIDR or IP address")
+	}
+	if ip4 := ip.To4(); ip4 != nil {
+		return &net.IPNet{IP: ip4, Mask: net.CIDRMask(32, 32)}, nil
+	}
+	return &net.IPNet{IP: ip, Mask: net.CIDRMask(128, 128)}, nil
 }
