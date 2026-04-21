@@ -1,0 +1,16 @@
+displayName: Clean X-Forwarded-For
+type: middleware
+
+import: github.com/mrtmexx/traefik-cleanxff
+
+summary: |
+  Removes trusted proxy IP addresses (load balancer, CDN, ingress) from the
+  X-Forwarded-For header before the request is forwarded to the upstream
+  backend. Keeps the real client IP and any untrusted intermediate hops.
+
+testData:
+  trustedCIDRs:
+    - "10.0.0.0/8"
+    - "192.168.0.0/16"
+    - "173.245.48.0/20"
+  headerName: X-Forwarded-For
